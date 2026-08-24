@@ -6,7 +6,8 @@ export default function MaterialModal({ material, departments, onClose, onSaved,
   const [m,setM]=useState({department_code:firstDept,...material});
   const field=(k,l,type='text',placeholder='')=><label>{l}<input type={type} value={m[k]??''} placeholder={placeholder} onChange={e=>setM({...m,[k]:type==='number'?(e.target.value===''?null:Number(e.target.value)):e.target.value})}/></label>;
   const del=async()=>{try{await request(`/materials/${m.usage_id}`,{method:'DELETE'});onSaved()}catch(e){setNotice(e.message)}};
-  return <div className="modal"><form onSubmit={async e=>{e.preventDefault();try{await request(m.usage_id?`/materials/${m.usage_id}`:'/materials',{method:m.usage_id?'PUT':'POST',body:JSON.stringify(m)});onSaved()}catch(e){setNotice(e.message)}}}>
+  const submit=async(e)=>{e.preventDefault();try{await request(m.usage_id?`/materials/${m.usage_id}`:'/materials',{method:m.usage_id?'PUT':'POST',body:JSON.stringify(m)});onSaved();}catch(err){setNotice(err.message)}};
+  return <div className="modal"><form onSubmit={submit}>
     <div className="modalHead"><div><h2>{m.usage_id?'Edit Spare':'Add Spare'}</h2><p className="muted">Department and SAP hierarchy are data, not hardcoded screens.</p></div><button type="button" className="ghost" onClick={onClose}>✕</button></div>
     <div className="formGrid">
       {field('material_code','Material Code')}{field('description','Description')}{field('part_number','Part Number')}
